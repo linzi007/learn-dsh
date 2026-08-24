@@ -17,3 +17,4 @@
 - [v0.3：Tool → AgentLoop → Permission](2026-08-24-v03.md)
 - [v0.4：Persistence → Jobs → Compaction](2026-08-24-v04.md)
 - [v0.5：MCP → Subagent → Capstone](2026-08-24-v05.md)
+- [v0.6：真实 DeepSeek + Keyless 双轨](2026-08-24-v06.md)

@@ -18,7 +18,7 @@ DeepSeek Harness 已经提供 Cordis 入门教程，但从“理解插件”到�
 
 ## 当前进度
 
-版本：`v0.5`。
+版本：`v0.6`。
 
 | 章节 | 状态 | 核心产物 | 是否需要 API Key |
 | --- | --- | --- | --- |
@@ -27,7 +27,7 @@ DeepSeek Harness 已经提供 Cordis 入门教程，但从“理解插件”到�
 | [03 Append-only session](s03_append_only_session/) | 可学习 | 连续、不可改写且失败不污染的事件日志 | 否 |
 | [04 Projection 与 replay](s04_projection_replay/) | 可学习 | 增量、全量 fold 与 seed replay 一致性 | 否 |
 | [05 Tool contract](s05_tool_contract/) | 可学习 | schema、参数、canonical value 与 renderer 闭环 | 否 |
-| [06 无 Key AgentLoop](s06_keyless_agent_loop/) | 可学习 | scripted LLM 驱动真实两步工具循环 | 否 |
+| [06 AgentLoop 双轨](s06_keyless_agent_loop/) | 可学习 | 默认真实 DeepSeek tool-use + keyless 事件显微镜 | 默认真实需要；CI 否 |
 | [07 Permission policy 与一次性 Approval](s07_permission/) | 可学习 | 可组合 policy、单次确认、审计与 fail-closed | 否 |
 | [08 JSONL persistence](s08_jsonl_persistence/) | 可学习 | 双 Context 恢复、torn tail 修复与 committed corruption 拒绝 | 否 |
 | [09 Background jobs](s09_background_jobs/) | 可学习 | 增量读取、owner 隔离、取消与生命周期清理 | 否 |
@@ -46,13 +46,36 @@ DeepSeek Harness 已经提供 Cordis 入门教程，但从“理解插件”到�
 - pnpm `11.7.0`（`packageManager` 已固定）
 - Git `2.26+`
 
-安装并运行第 1 章：
+安装依赖，并先准备第 6 章会用到的本机 DeepSeek 配置：
 
 ```bash
 corepack pnpm install
+cp -n .env.example .env
+chmod 600 .env
+```
+
+`cp -n` 在 `.env` 已存在时不会覆盖它。
+
+在 `.env` 中填写：
+
+```dotenv
+DEEPSEEK_API_KEY=你的本机 Key
+DEEPSEEK_MODEL=deepseek-v4-flash
+DSH_HOME=.dsh
+```
+
+`DEEPSEEK_MODEL` 是 Learn DSH 的课程约定，不是上游标准环境变量；课程会把它填入 `AgentOptions.model`。Key 可在 [DeepSeek 开放平台](https://platform.deepseek.com/api_keys)管理，真实费用以[官方定价页](https://api-docs.deepseek.com/quick_start/pricing/)为准。
+
+`.env` 与 `.dsh/` 已被 Git 忽略，绝不要把 Key 放进源码、提交、Issue 或日志。官方默认端点也会收到 Key、Prompt、工具 schema / 结果与 Harness 会话标识；`DEEPSEEK_BASE_URL` 只是把接收方改成你指定的网关，因此只能配置可信端点。当前 S06 只有无法读取文件的 `course_add`；未来接入 filesystem / shell 工具时，应把 Secret 移出 Agent 可访问工作区，改用 credentials service 或平台 Secret 注入。
+
+现在运行第 1 章：
+
+```bash
 corepack pnpm demo:s01
 corepack pnpm test:s01
 ```
+
+S01-S05 不会访问模型，也不会产生 API 费用；到 S06 才第一次使用这份配置。
 
 继续运行其余可学习章节：
 
@@ -61,7 +84,9 @@ corepack pnpm demo:s02 && corepack pnpm test:s02
 corepack pnpm demo:s03 && corepack pnpm test:s03
 corepack pnpm demo:s04 && corepack pnpm test:s04
 corepack pnpm demo:s05 && corepack pnpm test:s05
-corepack pnpm demo:s06 && corepack pnpm test:s06
+corepack pnpm demo:s06          # 默认：真实 DeepSeek，会联网并产生少量费用
+corepack pnpm demo:s06:keyless  # 固定实验：不联网
+corepack pnpm test:s06          # 自动验收：不联网
 corepack pnpm demo:s07 && corepack pnpm test:s07
 corepack pnpm demo:s08 && corepack pnpm test:s08
 corepack pnpm demo:s09 && corepack pnpm test:s09
@@ -78,7 +103,9 @@ corepack pnpm check:course
 corepack pnpm demo:all
 ```
 
-核心课程默认不需要模型 API Key。未来若增加真实模型 e2e，它只能是有费用提示的可选验证，不能替代 keyless 验收。
+`check:course` 与 `demo:all` 始终使用 keyless 路径，不使用 Key、不访问模型；这是贡献者与 CI 的可重复验收。学习者直接运行 `demo:s06` 时则默认走官方 DeepSeek adapter，真实观察 provider、tool-use、usage 和错误语义。
+
+两条证据不能互相冒充：keyless 通过证明 AgentLoop plumbing 可重复，真实 demo 通过才证明当前 Key、模型、网络和 tool-use 确实可用。真实实验关闭 thinking、限制每次输出 512 token、每 Turn 最多 3 个 Step，仍可能产生费用，也仍受额度与网络影响。
 
 ## 学习方式
 

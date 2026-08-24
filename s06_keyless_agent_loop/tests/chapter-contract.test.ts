@@ -11,7 +11,7 @@ describe('第 6 章文档与实现契约', () => {
 
     for (const heading of [
       '## 问题',
-      '## 先认识五个基本概念',
+      '## 先认识六个基本概念',
       '## 你会交付什么',
       '## 机制图',
       '## 本章边界',
@@ -50,9 +50,36 @@ describe('第 6 章文档与实现契约', () => {
       '`sourceEventSeqs`',
       '`maxStepsPerTurn`',
       'append-only Session',
+      '`provider: deepseek-official`',
+      '`model: deepseek-v4-flash`',
+      '`DEEPSEEK_API_KEY`',
+      '`DEEPSEEK_MODEL`',
     ]) {
       expect(readme, `缺少核心概念：${required}`).toContain(required)
     }
+  })
+
+  it('真实学习默认与 Keyless 自动验收明确分轨', async () => {
+    const readme = await readFile(resolve(chapterRoot, 'README.md'), 'utf8')
+    const packageJson = await readFile(resolve(chapterRoot, '../package.json'), 'utf8')
+    const realConfig = await readFile(resolve(chapterRoot, 'src/real-config.ts'), 'utf8')
+    const realHarness = await readFile(resolve(chapterRoot, 'src/real-agent-harness.ts'), 'utf8')
+    const realDemo = await readFile(resolve(chapterRoot, 'src/real-demo.ts'), 'utf8')
+
+    expect(readme).toContain('### A 轨：先跑真实 DeepSeek')
+    expect(readme).toContain('### B 轨：再用 Keyless 显微镜解释因果链')
+    expect(readme).toContain('CI 只运行 B 轨')
+    expect(packageJson).toContain('"demo:s06": "pnpm run demo:s06:real"')
+    expect(packageJson).toContain('"demo:s06:keyless"')
+    expect(packageJson).toContain('pnpm run demo:s06:keyless && pnpm run demo:s07')
+    expect(realConfig).toContain("DEFAULT_REAL_DEEPSEEK_MODEL = 'deepseek-v4-flash'")
+    expect(realConfig).not.toContain('apiKey:')
+    expect(realHarness).toContain('ctx.plugin(LlmDeepSeek')
+    expect(realHarness).toContain('thinking: \'disabled\'')
+    expect(realHarness).toContain('REAL_DEEPSEEK_MAX_STEPS = 3')
+    expect(realDemo).toContain('result.courseAddCallId')
+    expect(realDemo).toContain('result.courseAddResultText')
+    expect(realDemo).toContain('result.usage')
   })
 
   it('只替换 LLM adapter，并直接复用 S05 的正式工具 Plugin', async () => {
@@ -94,6 +121,7 @@ describe('第 6 章文档与实现契约', () => {
       '@deepseek-ai/dsh-agent-loop@0.1.1-rc.2',
       '@deepseek-ai/dsh-agent-loop-testkit@0.1.1-rc.2',
       '@deepseek-ai/dsh-llm@0.1.1-rc.2',
+      '@deepseek-ai/dsh-llm-deepseek@0.1.1-rc.2',
       '@deepseek-ai/dsh-session@0.1.1-rc.2',
       '@deepseek-ai/dsh-tools@0.1.1-rc.2',
     ]) {

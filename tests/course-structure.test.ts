@@ -24,6 +24,7 @@ const chapterDirectories = [
 ]
 
 const requiredFiles = [
+  '.env.example',
   'README.md',
   'LICENSE',
   'CONTRIBUTING.md',
@@ -45,6 +46,11 @@ const requiredFiles = [
   's05_tool_contract/tests/tool-contract.test.ts',
   's06_keyless_agent_loop/tests/chapter-contract.test.ts',
   's06_keyless_agent_loop/tests/agent-loop.test.ts',
+  's06_keyless_agent_loop/tests/real-config.test.ts',
+  's06_keyless_agent_loop/src/real-config.ts',
+  's06_keyless_agent_loop/src/real-agent-harness.ts',
+  's06_keyless_agent_loop/src/real-deepseek-lab.ts',
+  's06_keyless_agent_loop/src/real-demo.ts',
   's07_permission/tests/chapter-contract.test.ts',
   's07_permission/tests/permission.test.ts',
   's08_jsonl_persistence/tests/chapter-contract.test.ts',
@@ -161,6 +167,19 @@ describe('课程仓库结构', () => {
 
     expect(upstream).toContain('b150a551b8d465e31e418e1b2eaf5e79bbb7d28e')
     expect(upstream).not.toMatch(/github\.com\/deepseek-ai\/deepseek-harness\/blob\/(?:master|main)\//)
+  })
+
+  it('真实模型配置模板不含 Secret，且本地凭据与 DSH_HOME 均被忽略', async () => {
+    const example = await readFile(resolve(repositoryRoot, '.env.example'), 'utf8')
+    const gitignore = await readFile(resolve(repositoryRoot, '.gitignore'), 'utf8')
+
+    expect(example).toMatch(/^DEEPSEEK_API_KEY=$/m)
+    expect(example).toContain('DEEPSEEK_MODEL=deepseek-v4-flash')
+    expect(example).toContain('DSH_HOME=.dsh')
+    expect(example).not.toMatch(/^DEEPSEEK_API_KEY=\S+/m)
+    expect(gitignore).toContain('.env')
+    expect(gitignore).toContain('!.env.example')
+    expect(gitignore).toContain('.dsh/')
   })
 
   it('章节源码只从根 package.json 声明的直接依赖导入第三方包', async () => {

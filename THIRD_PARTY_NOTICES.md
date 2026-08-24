@@ -22,6 +22,7 @@
 - `@deepseek-ai/dsh-jobs@0.1.1-rc.2`
 - `@deepseek-ai/dsh-jobs-local@0.1.1-rc.2`
 - `@deepseek-ai/dsh-llm@0.1.1-rc.2`
+- `@deepseek-ai/dsh-llm-deepseek@0.1.1-rc.2`
 - `@deepseek-ai/dsh-mcp-client@0.1.1-rc.2`
 - `@deepseek-ai/dsh-session@0.1.1-rc.2`
 - `@deepseek-ai/dsh-session-persistence-jsonl@0.1.1-rc.2`
@@ -40,9 +41,9 @@
 - Copyright (c) 2026 DeepSeek
 - 许可证：MIT
 - 许可证原文：[固定基线的根 `LICENSE`](https://github.com/deepseek-ai/deepseek-harness/blob/b150a551b8d465e31e418e1b2eaf5e79bbb7d28e/LICENSE)
-- 用途：第 3-13 章演示 Session、Projection、Tool、AgentLoop、Approval、JSONL persistence、Jobs、Compaction、MCP、Subagent、Workflow 与 filesystem tools；testkit 只提供无 Key 组合依赖，模型边界仍由课程明确标注的 scripted adapter 代替。
+- 用途：第 3-13 章演示 Session、Projection、Tool、AgentLoop、Approval、JSONL persistence、Jobs、Compaction、MCP、Subagent、Workflow 与 filesystem tools；第 6 章默认真实轨使用官方 DeepSeek adapter，keyless 自动验收轨才以明确标注的 scripted adapter 替换模型边界。
 
-以上列出的生产直接依赖均为 MIT，peer dependency 也由 lockfile 固定；完整生产依赖树另含 BSD-2-Clause、BSD-3-Clause 与 ISC，详见 [v0.4 验证记录](validation/2026-08-24-v04.md)。
+以上列出的生产直接依赖均为 MIT，peer dependency 也由 lockfile 固定；完整生产依赖树另含 BSD-2-Clause、BSD-3-Clause 与 ISC，详见 [v0.6 验证记录](validation/2026-08-24-v06.md)。
 
 ## `@modelcontextprotocol/sdk`
 
