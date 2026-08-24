@@ -1,0 +1,38 @@
+{
+  "name": "learn-dsh",
+  "version": "0.1.0",
+  "private": true,
+  "description": "用可运行实验逐步学习 DeepSeek Harness 的非官方中文课程",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/linzi007/learn-dsh.git"
+  },
+  "homepage": "https://github.com/linzi007/learn-dsh#readme",
+  "bugs": {
+    "url": "https://github.com/linzi007/learn-dsh/issues"
+  },
+  "type": "module",
+  "packageManager": "pnpm@11.7.0",
+  "engines": {
+    "node": "^22.19.0 || >=24.0.0"
+  },
+  "scripts": {
+    "demo:s01": "tsx s01_lifecycle_microscope/src/demo.ts",
+    "lint": "oxlint s01_lifecycle_microscope tests vitest.config.ts --deny-warnings",
+    "test": "vitest run",
+    "test:s01": "vitest run s01_lifecycle_microscope/tests",
+    "typecheck": "tsc --noEmit",
+    "check:course": "pnpm run lint && pnpm run typecheck && pnpm run test"
+  },
+  "dependencies": {
+    "@deepseek-ai/cordis": "4.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "22.20.0",
+    "oxlint": "1.76.0",
+    "tsx": "4.22.4",
+    "typescript": "6.0.3",
+    "vitest": "4.1.8"
+  }
+}
