@@ -1,5 +1,13 @@
 packages:
   - '.'
 
+# 固定会影响 node_modules 布局的 pnpm 选项，避免不同命令按不同默认值反复重建。
+nodeLinker: isolated
+hoistPattern:
+  - '*'
+publicHoistPattern: []
+virtualStoreDirMaxLength: 120
+
 allowBuilds:
   esbuild: true
+  koffi: false
